@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using FilesInCSharp;
 
 internal class Program
 {
@@ -65,7 +64,11 @@ internal class Program
                 StreamReader sr = new(f);
                 for(int i = 0; i < lines; i++)
                 {
-                    aux += sr.ReadLine() + "\n";
+                    var verify = sr.ReadLine();
+                    if (verify == null)
+                        return aux;
+                    else
+                        aux += verify + "\n";
                 }
                 sr.Close();
             }
