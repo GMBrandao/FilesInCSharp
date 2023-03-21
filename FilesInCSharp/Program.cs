@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using FilesInCSharp;
 
 internal class Program
@@ -6,54 +7,43 @@ internal class Program
     private static void Main(string[] args)
     {
         string file;
+        string lorem = $"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n" +
+                       "Sed porttitor, nibh id dictum varius, magna libero rutrum nulla, at cursus nisl dolor et libero.\n" +
+                       "Duis ac nulla risus. Quisque euismod tortor nec consequat ornare.\n" +
+                       "Aliquam auctor aliquam neque. \n" +
+                       "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; \n" +
+                       "Nulla luctus consectetur nulla ut placerat.\n" +
+                       "Phasellus pellentesque nec dolor mollis hendrerit.\n" +
+                       "Aliquam gravida sem vulputate massa scelerisque, nec dignissim massa mollis.\n" +
+                       "Maecenas a mollis leo. Maecenas fringilla orci mi, in suscipit augue aliquet sit amet.\n" +
+                       "Suspendisse fermentum tempus malesuada. Donec nec ante lectus. ";
+        Console.WriteLine(lorem);
+        WriteFile(lorem);
 
-        Person person1 = CreatePerson();
-        Person person2 = CreatePerson();
-
-        WriteFile(person1);
-        WriteFile(person2);
-
-        Thread.Sleep(1000);
-        Console.Clear();
-
-        Console.Write("Informe o nome do arquivo a ser lido: ");
+        Console.Write("\nInforme o nome do arquivo a ser lido: ");
         file = Console.ReadLine();
-        var text = ReadFile(file);
+
+        Console.WriteLine("Quantas linhas serão lidas?");
+        int lines = int.Parse(Console.ReadLine());
+
+        var text = ReadFile(file, lines);
         Console.WriteLine("\n" + text);
-        Person CreatePerson()
-        {
-            string name;
-            char gender;
 
-            do
-            {
-                Console.Write("Informe o nome da pessoa: ");
-                name = Console.ReadLine();
-                if (name == "")
-                    Console.WriteLine("Nome inválido");
-            } while (name == "");
-
-            Console.Write("\nInforme o gênero da pessoa: ");
-            gender = char.Parse(Console.ReadLine());
-
-            return new(name, gender);
-        }
-
-        void WriteFile(Person person)
+        void WriteFile(string text)
         {
             try
             {
-                if (File.Exists("backup.txt"))
+                if (File.Exists("loremipsum.txt"))
                 {
-                    var temp = ReadFile("backup.txt");
-                    StreamWriter sw = new("backup.txt");
-                    sw.WriteLine(temp + "\n" + person.ToString());
+                    var temp = ReadFile("loremipsum.txt", 0);
+                    StreamWriter sw = new("loremipsum.txt");
+                    sw.Write(lorem);
                     sw.Close();
                 }
                 else
                 {
-                    StreamWriter sw = new("backup.txt");
-                    sw.WriteLine(person.ToString());
+                    StreamWriter sw = new("loremipsum.txt");
+                    sw.Write(lorem);
                     sw.Close();
                 }
             }
@@ -63,17 +53,20 @@ internal class Program
             }
             finally
             {
-                Console.WriteLine("Registro criado com sucesso!");
+                Console.WriteLine("\nRegistro criado com sucesso!");
             }
         }
 
-        string ReadFile(string f)
+        string ReadFile(string f, int lines)
         {
             string aux = "";
             try
             {
                 StreamReader sr = new(f);
-                aux = sr.ReadToEnd();
+                for(int i = 0; i < lines; i++)
+                {
+                    aux += sr.ReadLine() + "\n";
+                }
                 sr.Close();
             }
             catch (Exception)
